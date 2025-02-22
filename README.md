@@ -10,3 +10,5 @@ Data source : https://catalog.data.gov/dataset/real-estate-sales-2001-2018
 See other Projects : https://johnkimaiyo.vercel.app/
 
 Youtube Demo : https://youtu.be/gm1bVdvRsus
+
+Data Source --> Jupiter Notebook(Train the data) --> Flask Server(Render the Prediction app to the Browser)
