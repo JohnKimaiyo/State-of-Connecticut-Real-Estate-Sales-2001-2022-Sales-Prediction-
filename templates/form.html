@@ -1,0 +1,246 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sales Prediction</title>
+    <style>
+        /* Base styles */
+        :root {
+            --primary: #4f46e5;
+            --primary-hover: #4338ca;
+            --danger: #dc2626;
+            --danger-hover: #b91c1c;
+        }
+        
+        body {
+            font-family: system-ui, -apple-system, sans-serif;
+            background-color: #f3f4f6;
+            margin: 0;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 2rem 1rem;
+        }
+
+        .container {
+            background-color: white;
+            padding: 2rem;
+            border-radius: 0.5rem;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+            width: 100%;
+            max-width: 32rem;
+        }
+
+        .header {
+            margin-bottom: 2rem;
+            text-align: center;
+        }
+
+        .title {
+            color: #111827;
+            font-size: 1.875rem;
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+        }
+
+        .subtitle {
+            color: #6b7280;
+            font-size: 1rem;
+        }
+
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+
+        .label {
+            display: block;
+            color: #374151;
+            font-size: 0.875rem;
+            font-weight: 500;
+            margin-bottom: 0.5rem;
+        }
+
+        .input {
+            width: 100%;
+            padding: 0.75rem;
+            border: 1px solid #d1d5db;
+            border-radius: 0.375rem;
+            font-size: 1rem;
+            transition: border-color 0.15s ease-in-out;
+        }
+
+        .input:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.1);
+        }
+
+        .date-group {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 1rem;
+        }
+
+        .button-group {
+            display: flex;
+            gap: 1rem;
+            margin-top: 2rem;
+        }
+
+        .btn {
+            flex: 1;
+            padding: 0.75rem 1rem;
+            border: none;
+            border-radius: 0.375rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: background-color 0.15s ease-in-out;
+        }
+
+        .btn-primary {
+            background-color: var(--primary);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background-color: var(--primary-hover);
+        }
+
+        .btn-danger {
+            background-color: var(--danger);
+            color: white;
+        }
+
+        .btn-danger:hover {
+            background-color: var(--danger-hover);
+        }
+
+        /* Input validation styles */
+        .input:invalid {
+            border-color: var(--danger);
+        }
+
+        .input:invalid:focus {
+            box-shadow: 0 0 0 3px rgba(220, 38, 38, 0.1);
+        }
+
+        /* Responsive adjustments */
+        @media (max-width: 640px) {
+            .date-group {
+                grid-template-columns: 1fr;
+                gap: 0.5rem;
+            }
+        }
+    </style>
+    <script>
+        function resetForm() {
+            document.getElementById("salesForm").reset();
+            // Remove any validation styling
+            const inputs = document.querySelectorAll('.input');
+            inputs.forEach(input => {
+                input.classList.remove('invalid');
+            });
+        }
+
+        function validateForm(event) {
+            const form = event.target;
+            const day = parseInt(form.day.value);
+            const month = parseInt(form.month.value);
+            
+            // Basic date validation
+            const daysInMonth = new Date(form.year.value, month, 0).getDate();
+            if (day > daysInMonth) {
+                alert(`Invalid date: ${month}/${day}/${form.year.value}. This month has ${daysInMonth} days.`);
+                event.preventDefault();
+                return false;
+            }
+            return true;
+        }
+    </script>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1 class="title">Sales Prediction</h1>
+            <p class="subtitle">Enter property details to get a sales prediction</p>
+        </div>
+        
+        <form id="salesForm" action="/predict" method="post" onsubmit="return validateForm(event)">
+            <div class="form-group">
+                <label class="label" for="assessed_value">Assessed Value ($)</label>
+                <input 
+                    type="number" 
+                    id="assessed_value"
+                    name="assessed_value" 
+                    class="input"
+                    placeholder="Enter property value"
+                    required
+                >
+            </div>
+            
+            <div class="form-group">
+                <label class="label" for="sales_ratio">Sales Ratio</label>
+                <input 
+                    type="number" 
+                    id="sales_ratio"
+                    name="sales_ratio" 
+                    step="0.01" 
+                    class="input"
+                    placeholder="Enter sales ratio"
+                    required
+                >
+            </div>
+            
+            <div class="form-group">
+                <label class="label">Date</label>
+                <div class="date-group">
+                    <div>
+                        <input 
+                            type="number" 
+                            name="year" 
+                            class="input"
+                            placeholder="YYYY"
+                            min="1900"
+                            max="2100"
+                            required
+                        >
+                    </div>
+                    <div>
+                        <input 
+                            type="number" 
+                            name="month" 
+                            class="input"
+                            placeholder="MM"
+                            min="1" 
+                            max="12"
+                            required
+                        >
+                    </div>
+                    <div>
+                        <input 
+                            type="number" 
+                            name="day" 
+                            class="input"
+                            placeholder="DD"
+                            min="1" 
+                            max="31"
+                            required
+                        >
+                    </div>
+                </div>
+            </div>
+
+            <div class="button-group">
+                <button type="submit" class="btn btn-primary">
+                    Predict Sales
+                </button>
+                <button type="button" class="btn btn-danger" onclick="resetForm()">
+                    Reset
+                </button>
+            </div>
+        </form>
+    </div>
+</body>
+</html>
